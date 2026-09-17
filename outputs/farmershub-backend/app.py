@@ -52,8 +52,12 @@ def api_error(message: str, status: int = 400):
 
 @app.after_request
 def cors(response):
-    # The two static frontend deployments are separate origins during the MVP.
-    response.headers["Access-Control-Allow-Origin"] = os.getenv("CORS_ORIGIN", "*")
+    allowed_origins = [origin.strip() for origin in os.getenv("CORS_ORIGIN", "*").split(",") if origin.strip()]
+    request_origin = request.headers.get("Origin")
+    if "*" in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    elif request_origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = request_origin
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,PATCH,DELETE,OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response

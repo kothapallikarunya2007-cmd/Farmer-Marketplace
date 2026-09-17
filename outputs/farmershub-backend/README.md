@@ -25,3 +25,15 @@ The first launch creates `farmershub.db` and seeds demo farmers, products and or
 - `PATCH|DELETE /api/farmers/<id>/products/<product_id>` — edit/deactivate products
 
 For production, set `DATABASE_PATH` to a persistent volume, restrict CORS to your deployed customer and farmer domains, store secrets in deployment environment variables, and replace the SMS stub with Twilio credentials.
+
+## Render deployment
+
+Create a Render Web Service from the repository and set:
+
+```text
+Root Directory: outputs/farmershub-backend
+Build Command: pip install -r requirements.txt
+Start Command: gunicorn app:app
+```
+
+Add `CORS_ORIGIN` with the customer and farmer frontend origins. After deployment, copy the service URL into both frontend `api-config.js` files and redeploy the Vercel projects.
